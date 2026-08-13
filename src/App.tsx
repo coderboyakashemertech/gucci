@@ -1,10 +1,15 @@
 import { TabBar } from "./components/TabBar";
 import { Home } from "./pages/Home";
 import { Splash } from "./pages/Splash";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const App = () => {
   const [screen, setScreen] = useState<"splash" | "home">("splash");
+
+  useEffect(() => {
+    const mobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    document.documentElement.classList.toggle("is-mobile", mobile);
+  }, []);
 
   return (
     <div className="stage">
