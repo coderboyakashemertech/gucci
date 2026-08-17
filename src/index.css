@@ -16,7 +16,8 @@
 }
 
 :root {
-  --tab-h: 108px;
+  --tab-h: 54px;
+  --tab-inset: 16px;
   --phone-w: 390px;
   --phone-h: 844px;
   --phone-bezel: 12px;
@@ -241,8 +242,6 @@ html.is-mobile .phone__screen {
   overflow-x: hidden;
   scrollbar-width: none;
   background: #000;
-  scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
   overscroll-behavior-y: contain;
 }
 
@@ -255,8 +254,6 @@ html.is-mobile .phone__screen {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
 .panel {
@@ -387,8 +384,6 @@ html.is-mobile .phone__screen {
   overflow-x: hidden;
   overflow-y: auto;
   scrollbar-width: none;
-  scroll-snap-type: y mandatory;
-  scroll-behavior: smooth;
   overscroll-behavior-y: contain;
 }
 
@@ -413,8 +408,6 @@ html.is-mobile .phone__screen {
   min-height: 100%;
   overflow: hidden;
   background: #000;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
 .splash-hero img {
@@ -546,8 +539,6 @@ html.is-mobile .phone__screen {
   display: flex;
   flex-direction: column;
   background: #fff;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
 .splash-story img {
@@ -567,7 +558,7 @@ html.is-mobile .phone__screen {
 
 .splash-story__text {
   flex-shrink: 0;
-  padding: 18px 20px calc(var(--tab-h) + 16px);
+  padding: 18px 20px calc(var(--tab-h) + var(--tab-inset) + 16px);
   color: #111;
   opacity: 0;
   transform: translateY(22px);
@@ -661,26 +652,32 @@ html.is-mobile .phone__screen {
 
 .tabbar {
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  left: var(--tab-inset);
+  right: var(--tab-inset);
+  bottom: var(--tab-inset);
   height: var(--tab-h);
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   align-items: center;
-  padding: 12px 6px 18px;
-  background: rgba(20, 16, 12, 0.55);
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 28px 28px 0 0;
-  backdrop-filter: blur(18px) saturate(140%);
-  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  border-radius: 28px;
+  backdrop-filter: blur(16px) saturate(130%);
+  -webkit-backdrop-filter: blur(16px) saturate(130%);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  transition: transform 0.28s ease, opacity 0.22s ease;
+}
+
+.tabbar.is-hidden {
+  transform: translateY(calc(100% + var(--tab-inset) + 8px));
+  opacity: 0;
+  pointer-events: none;
 }
 
 .tab {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
+  min-width: 0;
   color: #111;
   background: none;
   border: 0;
@@ -691,14 +688,33 @@ html.is-mobile .phone__screen {
 .tab__icon {
   position: relative;
   overflow: hidden;
-  width: 54px;
-  height: 54px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
+  border: 1.5px solid #111;
   background: #fff;
   color: #111;
   display: grid;
   place-items: center;
   z-index: 0;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.tab__icon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 50%;
+  background: #111;
+  transform: scale(0);
+  transition: transform 0.35s ease;
+}
+
+.tab.is-filling .tab__icon,
+.tab.is-active .tab__icon {
+  color: #fff;
+  border-color: #fff;
 }
 
 .tab__icon::before {
@@ -723,15 +739,24 @@ html.is-mobile .phone__screen {
 }
 
 .tab svg {
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
 }
 
 .tab__label {
+  max-width: 100%;
   font-family: var(--title);
-  font-size: 8px;
+  font-size: 6px;
   font-weight: 500;
   color: #fff;
-  letter-spacing: 0.14em;
-  text-indent: 0.14em;
+  letter-spacing: 0.12em;
+  text-indent: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tab:nth-child(4) .tab__label {
+  font-size: 6.5px;
+  letter-spacing: 0.06em;
+  text-indent: 0.06em;
 }

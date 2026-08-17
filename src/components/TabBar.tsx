@@ -1,62 +1,64 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const tabs = [
   { label: "Home", icon: "home" },
   { label: "Search", icon: "search" },
-  { label: "AI Camera", icon: "camera" },
-  { label: "Tag", icon: "tag" },
+  { label: "Camera", icon: "camera" },
+  { label: "Gucci Tag", icon: "tag" },
   { label: "My", icon: "my" },
 ] as const;
 
 function Icon({ name }: { name: (typeof tabs)[number]["icon"] }) {
+  const common = {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: "1.55",
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
+
   if (name === "home") {
     return (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinejoin="round">
-        <path d="M4 11.2 12 4.2 20 11.2V20a1.4 1.4 0 0 1-1.4 1.4H5.4A1.4 1.4 0 0 1 4 20z" />
-        <path d="M10 21.4v-6.2h4v6.2" />
-        <path d="M10.4 16.4h3.2" />
+      <svg {...common}>
+        <path d="M4.2 11.1 12 4.4l7.8 6.7V19.4A1.4 1.4 0 0 1 18.4 20.8H5.6A1.4 1.4 0 0 1 4.2 19.4z" />
+        <path d="M9.6 20.8v-6h4.8v6" />
       </svg>
     );
   }
   if (name === "search") {
     return (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
-        <circle cx="11" cy="11" r="6.4" />
-        <path d="m16.2 16.2 4.2 4.2" />
+      <svg {...common}>
+        <circle cx="11" cy="11" r="6.2" />
+        <path d="m16.1 16.1 4.2 4.2" />
       </svg>
     );
   }
   if (name === "camera") {
     return (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinejoin="round">
-        <rect x="3.2" y="7.4" width="17.6" height="12.4" rx="2.2" />
-        <circle cx="12" cy="13.6" r="3.2" />
-        <path d="M8.4 7.4 9.6 4.8h4.8L15.6 7.4" />
-        <path
-          fill="currentColor"
-          stroke="none"
-          d="M19.2 3.2 20 5.2l2 0.8-2 0.8-0.8 2-0.8-2-2-0.8 2-0.8z"
-        />
+      <svg {...common}>
+        <path d="M8.2 7.2 9.4 5h5.2l1.2 2.2h2.6A1.6 1.6 0 0 1 20 8.8v9A1.6 1.6 0 0 1 18.4 19.4H5.6A1.6 1.6 0 0 1 4 17.8v-9A1.6 1.6 0 0 1 5.6 7.2z" />
+        <circle cx="12" cy="13.2" r="3.1" />
       </svg>
     );
   }
   if (name === "tag") {
     return (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round">
-        <path d="M8 5.2H5.2V8" />
-        <path d="M16 5.2h2.8V8" />
-        <path d="M8 18.8H5.2V16" />
-        <path d="M16 18.8h2.8V16" />
-        <path d="M16.4 8.6c1.6 0.4 2.8 1.4 3.4 2.8" />
-        <path d="M16.4 11c1 .3 1.7 1 2.1 2" />
-        <path d="M16.6 13.2c.5.2.9.6 1.1 1.1" />
+      <svg {...common}>
+        <path d="M8.2 5.4H5.6V8" />
+        <path d="M15.8 5.4h2.6V8" />
+        <path d="M8.2 18.6H5.6V16" />
+        <path d="M15.8 18.6h2.6V16" />
+        <path d="M16.2 9.1c1.5.5 2.6 1.5 3.1 2.9" />
+        <path d="M16.2 11.4c.9.3 1.6 1 2 1.9" />
+        <path d="M16.4 13.6c.45.2.8.55 1 1" />
       </svg>
     );
   }
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinejoin="round">
-      <circle cx="12" cy="8.2" r="3.4" />
-      <path d="M5.4 20c1.1-3.4 3.4-5.1 6.6-5.1s5.5 1.7 6.6 5.1" />
+    <svg {...common}>
+      <circle cx="12" cy="8.4" r="3.15" />
+      <path d="M5.6 19.6c1.05-3.15 3.25-4.8 6.4-4.8s5.35 1.65 6.4 4.8" />
     </svg>
   );
 }
@@ -69,6 +71,26 @@ export function TabBar({
   onHome: () => void;
 }) {
   const [filled, setFilled] = useState<string | null>(null);
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    const app = document.querySelector(".app");
+    if (!app) return;
+
+    setHidden(false);
+    let timer = 0;
+    function onScroll() {
+      setHidden(true);
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => setHidden(false), 280);
+    }
+
+    app.addEventListener("scroll", onScroll, true);
+    return () => {
+      app.removeEventListener("scroll", onScroll, true);
+      window.clearTimeout(timer);
+    };
+  }, [active]);
 
   function press(label: string, action?: () => void) {
     setFilled(label);
@@ -79,7 +101,7 @@ export function TabBar({
   }
 
   return (
-    <nav className="tabbar" aria-label="Primary">
+    <nav className={hidden ? "tabbar is-hidden" : "tabbar"} aria-label="Primary">
       {tabs.map((tab) => {
         const isHome = tab.icon === "home";
         return (
